@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "coded-school-chicago"
+version = "0.1.0"
+description = ""
+authors = ["apichat-klang <apichat@uchicago.edu>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+requests = "^2.31.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
