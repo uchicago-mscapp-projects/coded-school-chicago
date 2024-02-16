@@ -14,7 +14,8 @@ def scrape_school_page(url):
   Returns: 
    A dictionary with the following keys:
             * name: the name of the school
-            * act: average act score
+            * zip: school zip code
+            * avg_sat: average SAT score
             * ap_participation: percent of students participating in AP scores
             * ib_enrollment: percent of students enrolled in IB
             * grad_rate: graduation rate of the school
@@ -22,3 +23,15 @@ def scrape_school_page(url):
             * student_to_teacher: student to teacher ratio
             * absenteeism: percentage of students who are chronically absent 
   """
+  response = requests.get(url)
+  root = lxml.html.fromstripoetry ng(response.text)
+  
+  school_page_info = {}
+  
+  name = root.cssselect('div.class:contains("name")')
+  school_page_info['name'] = name[0].text_content()
+  
+  avg_sat = root.cssselect()
+  school_page_info['act_avg'] = act_avg[0].text_content()
+        
+  
