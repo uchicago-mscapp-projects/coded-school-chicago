@@ -11,6 +11,8 @@ requests = "^2.31.0"
 lxml = "^5.1.0"
 cssselect = "^1.2.0"
 ipython = "^8.21.0"
+pandas = "^2.2.0"
+plotly = "^5.19.0"
 
 
 [build-system]
