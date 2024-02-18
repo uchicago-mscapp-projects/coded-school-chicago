@@ -27,7 +27,8 @@ def get_next_page_url(url):
 
     website = requests.get(url)
     content = lxml.html.fromstring(website.text)
-    div_elements = content.xpath("////div[@class='search-body list-view']")
+    div_elements_nothing = content.xpath("////div[@class='search-body list-view']")
+    #div_elements_stops = content.xpath("//div[@class='inner-container-gs-v2']")
     
     # Serialize each element to a string
     div_html_contents = [tostring(element, pretty_print=True).decode('utf-8') for element in div_elements]
@@ -44,25 +45,16 @@ def get_next_page_url(url):
     #return(pagination_buttons)
     
 
-    #css select --- 
+    #css select? --- 
 
     #3 if statements 
-    #First Page 
-        # go to //a[@class='anchor-button   anchor-button'")
-        # go to the 7th one and grab the website
-        #OR get the child in the 9th one 
-    #middle Page 
-        #
+    #so pagination-buttons.button-group has 9 anchor-button   anchor-button
+    #take the last one 
+    #print out the website
+    #the last page will give an empty 
+    #so if empty return none 
 
-        # go to //a[@class='anchor-button   anchor-button']")
-        # go to the 7th one and grab the website
-        # OR get the 9th child Index with -1
-#so note we will have to make a for statement between getting the 9th child and returning None when we are on the last page 
-    #Last Page
-        # go to //a[@class='anchor-button   anchor-button']")
-        # OR if the 9th child == @class='anchor-button disabled anchor-button'
-
-    #next_page_url = click_next[8].get('href') 
+    #next_page_url = click_next[9].get('href') 
 
 
     #return next_page_url
