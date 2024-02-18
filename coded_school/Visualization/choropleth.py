@@ -22,9 +22,11 @@ def create_choropleth():
                             featureidkey="properties.zip", 
                             color='Median',
                             projection="mercator",
+                            title='Median Income by Zip Code',
                             labels={'Median': 'Median income'})
     
     map_zip.update_geos(fitbounds="locations", visible=False)
     map_zip.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-    map_zip.show()
+    
+    return map_zip
     
