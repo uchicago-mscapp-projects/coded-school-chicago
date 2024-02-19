@@ -1,7 +1,8 @@
 import requests
 import lxml.html
+import csv
 
-def scrape_school_page(url):
+def scrape_school_page(url_list):
   """
   This function takes a Url to a high school page, from Great Schools,
   and returns a dictionary with School Name, ACT scores, AP Participation, IB enrollment,
@@ -23,15 +24,45 @@ def scrape_school_page(url):
             * student_to_teacher: student to teacher ratio
             * absenteeism: percentage of students who are chronically absent 
   """
-  response = requests.get(url)
-  root = lxml.html.fromstripoetry ng(response.text)
+  for url in url_list: 
+    response = requests.get(url)
+    root = lxml.html.fromstring(response.text)
+    
+    school_page_info = {}
+    name = root.cssselect('div.class:contains("name")')
+    school_page_info['name'] = name[0].text_content().strip()
+    
+    address = root.cssselect('section div div section div div div div div div div')
+    address = address[6].text_content().strip()
+    zip = zip.split()
+    zip = zip[-1]
+    school_page_info['zip'] = zip
   
-  school_page_info = {}
+    avg_sat = root.cssselect('div.class:contains("score") + div.class')
+    school_page_info['avg_sat'] = avg_sat[0].text_content().strip()
+
+    #ap_math 
+    #ap_science
+    #other_ap
+    #school_page_info['ap_participation'] = ap_math + ap_science + other_ap
+    
+    grad_rate = root.cssselect('section.id' + 'div.class:contains("percentage")')
+    school_page_info['grad_rate'] = grad_rate[0].text_content().strip()
+    
+    low_inc_perc = root.cssselect('section.class' + 'div.class:contains("percentage")')
+    school_page_info['low_inc_perc'] = low_inc_perc[0].text_content().strip()
+    
+    ratio = root.cssselect('section div div section div div')
+    school_page_info['stu_to_teach'] = ratio[0].text_content().strip()
+    
+    absent = root.cssselect('body div section div section div div')
+    absent = 
+    school_page_info['absenteeism'] = asbent[].text_content().strip()
+    
+    return school_page_info
+    
   
-  name = root.cssselect('div.class:contains("name")')
-  school_page_info['name'] = name[0].text_content()
   
-  avg_sat = root.cssselect()
-  school_page_info['act_avg'] = act_avg[0].text_content()
+  
         
   
