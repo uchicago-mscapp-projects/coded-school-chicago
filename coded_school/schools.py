@@ -24,11 +24,13 @@ def scrape_school_page(url_list):
             * student_to_teacher: student to teacher ratio
             * absenteeism: percentage of students who are chronically absent 
   """
+  
+  school_page_info = {}
+  
   for url in url_list: 
     response = requests.get(url)
     root = lxml.html.fromstring(response.text)
     
-    school_page_info = {}
     name = root.cssselect('div.class:contains("name")')
     school_page_info['name'] = name[0].text_content().strip()
     
@@ -59,7 +61,7 @@ def scrape_school_page(url_list):
     absent = 
     school_page_info['absenteeism'] = asbent[].text_content().strip()
     
-    return school_page_info
+  return school_page_info
     
   
   
