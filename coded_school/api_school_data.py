@@ -15,17 +15,20 @@ response_API = requests.get(url_chicago_portal)
 
 # Chicago Public Schools - School Progress Reports SY2324
 df = pd.read_json(response_API.text)
-filtered_df = df[['long_name', 'zip', 'primary_category', 'cps_school_profile', 
+# Filtered high school
+hs_df = df[df['primary_category'] == 'HS']
+
+filtered_df = hs_df[['long_name', 'zip', 'primary_category', 'cps_school_profile', 
                   'mobility_rate_pct', 'chronic_truancy_pct', 'sat_grade_11_score_school', 
                   'college_enrollment_school', 'graduation_5_year_school']]
-
-# Filtered high school
-hs_df = filtered_df[filtered_df['primary_category'] == 'HS']
 
 # Get url to CPS school page
 for index, row in hs_df.iterrows():
     hs_df.at[index, "cps_school_profile"] = row["cps_school_profile"]["url"]
 
+
+
+### Shkip this
 ### Overview page
 """
 Get School Grade, Low Income, Diverse Learner, Limited English, Mobility Rate
