@@ -71,7 +71,7 @@ def combine_dicts(dicts_list):
     return combined_dict
 
 
-def create_dataframe(urls):
+def create_dataframe():
     """
     Creates a DataFrame containing geographic values for Chicago based on its zip codes.
 
@@ -81,6 +81,7 @@ def create_dataframe(urls):
     Returns:
         A DataFrame containing geographic values per zip code.
     """
+    urls = [url_poverty_rate, url_unemp_rate, url_hs_enroll_rate, url_med_income]
     dicts_list = []
     for web in urls:
         dict_zip = get_geo_data(web)
@@ -89,4 +90,6 @@ def create_dataframe(urls):
     df = pd.DataFrame.from_dict(combine, orient='index', columns=col_name)
     # Convert median income to integer
     df["med_income"] = df["med_income"].astype("int")
+    df = df.reset_index()
+    df = df.rename(columns={'index': 'Zips'})
     return df
