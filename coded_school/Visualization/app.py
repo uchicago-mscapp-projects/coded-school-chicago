@@ -1,42 +1,52 @@
-from dash import Dash, html, dcc, Output
+from dash import Dash, html, dcc, Input, Output
 import plotly.express as px
-from coded_school.data import get_median_income
-#from ..data import get_median_income
+from coded_school.data import *
 from urllib.request import urlopen
-import pandas as pd
 import json
 
 app = Dash(__name__)
 
 app.layout = html.Div([
-    html.Div(children="Chicago's Median Income per zip code"),
-    html.Div(dcc.Graph(id='graph'))
+    html.H4("Economic indicators for the city of Chicago by zip code"),
+    html.P("Select data"),
+    dcc.RadioItems(
+        id="data",
+        options=[
+            {"label": "Poverty rate (%)", "value": "poverty_rate"},
+            {"label": "Unemployment rate (%)", "value": "unemp_rate"},
+            {"label": "High school enrollment rate (%)", "value": "hs_enrol_rate"},
+            {"label": "Median income ($)", "value": "med_income"}
+        ],
+        value="med_income",  # Default value
+        inline=True
+    ),
+    dcc.Graph(id="graph"),
 ])
 
 @app.callback(
-    Output("graph", "figure"))
-def display_choropleth():
+    Output("graph", "figure"),
+    Input("data", "value"))
+def display_choropleth(data):
     with urlopen("https://data.cityofchicago.org/api/geospatial/gdcf-axmw?method=export&format=GeoJSON") as response:
         zip_codes = json.load(response)
 
-    income_dict = get_median_income()
-    income_data = pd.DataFrame.from_dict(income_dict, orient='index', columns=['Median'])
-    income_data = income_data.reset_index()
-    income_data = income_data.rename(columns={'index': 'Zips'})
-
+    df = create_dataframe()
     #zip_codes["features"][0]["properties"]
 
-    map_zip = px.choropleth(income_data, geojson=zip_codes, 
+    fig = px.choropleth_mapbox(df, geojson=zip_codes, 
                             locations='Zips',
                             featureidkey="properties.zip", 
-                            color='Median',
-                            projection="mercator",
-                            title='Median Income by Zip Code',
-                            labels={'Median': 'Median income'})
+                            color=df[data],
+                            title='Economics Indicators by Zip Code',
+                            mapbox_style="open-street-map",
+                            center={"lat": 41.881832, "lon": -87.623177},
+                            color_continuous_scale="Viridis",
+                            opacity=0.8,
+                            zoom=8.5)
     
-    map_zip.update_geos(fitbounds="locations", visible=False)
-    map_zip.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-    return map_zip
+    fig.update_geos(fitbounds="locations", visible=False)
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    return fig
 
 if __name__ == '__main__':
     app.run(debug=True)
