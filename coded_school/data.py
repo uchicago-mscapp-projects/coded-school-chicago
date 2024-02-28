@@ -91,5 +91,5 @@ def create_dataframe():
     # Convert median income to integer
     df["med_income"] = df["med_income"].astype("int")
     df = df.reset_index()
-    df = df.rename(columns={'index': 'Zips'})
+    df = df.rename(columns={'index': 'zip'})
     return df
