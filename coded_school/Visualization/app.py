@@ -34,7 +34,7 @@ def display_choropleth(data):
     #zip_codes["features"][0]["properties"]
 
     fig = px.choropleth_mapbox(df, geojson=zip_codes, 
-                            locations='Zips',
+                            locations='zip',
                             featureidkey="properties.zip", 
                             color=df[data],
                             title='Economics Indicators by Zip Code',
@@ -42,7 +42,7 @@ def display_choropleth(data):
                             center={"lat": 41.881832, "lon": -87.623177},
                             color_continuous_scale="Viridis",
                             opacity=0.8,
-                            zoom=8.5)
+                            zoom=9)
     
     fig.update_geos(fitbounds="locations", visible=False)
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
