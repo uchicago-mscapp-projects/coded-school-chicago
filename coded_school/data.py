@@ -13,20 +13,27 @@ col_name = ["poverty_rate", "unemp_rate", "hs_enrol_rate", "med_income"]
 
 def get_geo_data(url):
     """
-    This function retrieves the zip code data along with its median income and returns it as a dictionary.
+    This function retrieves the zip code data its associate the values 
+    and returns it as a dictionary.
+
+    Inputs:
+        url (str): url website to retrieve data
+
+    Returns:
+        Dictionary mapping zipcode to its value
     """
     r = requests.get(url)
     elem = lxml.html.fromstring(r.text)
 
     # Get the zip number
-    all_zip = elem.xpath("//*[@id='comp']/tbody/tr/td/a")
+    all_zip = elem.xpath("//table[@id='comp']/tbody/tr/td/a")
     zip_code = []
     for row in all_zip:
         z = row.text_content()
         zip_code.append(z)
 
     # Get geo data
-    all_data = elem.xpath("//*[@id='comp']/tbody/tr/td[3]")
+    all_data = elem.xpath("//table[@id='comp']/tbody/tr/td[3]")
     zip_data = []
     for i, row in enumerate(all_data):
         income = row.text_content()
@@ -38,23 +45,48 @@ def get_geo_data(url):
 
 
 def combine_dicts(dicts_list):
+    """
+    Combines a list of dictionaries into a single dictionary where each key maps to a list of cleaned and transformed values.
+    
+    Parameters:
+        dicts_list (list): A list of dictionaries.
+    
+    Returns:
+        A dictionary where each key maps to a list of cleaned and transformed values from the input dictionaries.
+    """
     all_keys = set()
+    # Collect all unique keys
     for d in dicts_list:
-        all_keys.update(d.keys())  # Collect all unique keys
-
+        all_keys.update(d.keys())  
     combined_dict = {}
     for key in all_keys:
-        combined_dict[key] = []  # Initialize empty list for each key
+        # Initialize empty list for each key
+        combined_dict[key] = []  
         for d in dicts_list:
-            combined_dict[key].append(d.get(key))  # Append value if key exists, otherwise append None
+            value = d.get(key)
+            # Clean and transform value to float
+            if value:
+                value = float(value.strip("%$").replace(",", ""))
+            combined_dict[key].append(value)
     return combined_dict
 
 
-def create_data_frame(urls):
+def create_dataframe(urls):
+    """
+    Creates a DataFrame containing geographic values for Chicago based on its zip codes.
+
+    Inputs:
+        urls (list): A list of URLs.
+
+    Returns:
+        A DataFrame containing geographic values per zip code.
+    """
     dicts_list = []
     for web in urls:
         dict_zip = get_geo_data(web)
         dicts_list.append(dict_zip)
     combine = combine_dicts(dicts_list)
     df = pd.DataFrame.from_dict(combine, orient='index', columns=col_name)
+    # Convert median income to integer
+    df["med_income"] = df["med_income"].astype("int")
     return df
