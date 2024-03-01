@@ -22,7 +22,8 @@ data = data.dropna()
 x = data['sat_grade_11_score_school'].values.reshape(-1, 1)
 y = data['med_income'].values
 model = LinearRegression().fit(x, y)
-print(model)
+print(model.coef_)
+print(model.intercept_)
 prediction = model.predict(x)
 
 # Scatter plot of Avg SAT Score and Median Income 
