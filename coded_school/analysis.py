@@ -34,3 +34,22 @@ school_attributes = ['student_attainment_rating', 'culture_climate_rating',
 for category, coef in zip(school_attributes, model1.coef_):
     print(category, ":", coef)
 print("med_income_intercept:", model1.intercept_)
+
+
+y2 = data['poverty_rate']
+model2 = LinearRegression().fit(x1, y1)
+for category, coef in zip(school_attributes, model2.coef_):
+    print(category, ":", coef)
+print("poverty_rate_intercept:", model1.intercept_)
+
+y3 = data['unemp_rate']
+model3 = LinearRegression().fit(x1, y1)
+for category, coef in zip(school_attributes, model3.coef_):
+    print(category, ":", coef)
+print("unemp_rate_intercept:", model1.intercept_)
+
+y4 = data['hs_enrol_rate']
+model4 = LinearRegression().fit(x1, y1)
+for category, coef in zip(school_attributes, model4.coef_):
+    print(category, ":", coef)
+print("med_income_intercept:", model1.intercept_)
