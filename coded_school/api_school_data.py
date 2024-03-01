@@ -98,5 +98,8 @@ def cleaned_data():
         data['zip'] = data['zip'].astype(str)
 
         merged_data = pd.merge(data, income, on = 'zip', how = 'left')
-
+        merged_data.to_csv('./merged_data.csv', index = False)
         return merged_data 
+    
+if __name__ == '__main__':
+    cleaned_data()
