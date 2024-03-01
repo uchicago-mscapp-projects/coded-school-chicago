@@ -21,7 +21,7 @@ plt.xlabel("Average 11th Grade SAT Score of Schools in Zip Code")
 plt.ylabel("Median Househould Income in this Zip Code")
 plt.show()
 
-#Multiple Regression
+#Median Income on School Attributes
 x1 = data[['student_attainment_rating', 'culture_climate_rating', 
           'mobility_rate_pct', 'chronic_truancy_pct', 'sat_grade_11_score_school',
           'drop_out_rate', 'suspensions_rate']].values
@@ -35,19 +35,21 @@ for category, coef in zip(school_attributes, model1.coef_):
     print(category, ":", coef)
 print("med_income_intercept:", model1.intercept_)
 
-
+# Poverty Rate on School Attributes
 y2 = data['poverty_rate']
 model2 = LinearRegression().fit(x1, y1)
 for category, coef in zip(school_attributes, model2.coef_):
     print(category, ":", coef)
 print("poverty_rate_intercept:", model1.intercept_)
 
+# Unemployment Rate on School Attributes
 y3 = data['unemp_rate']
 model3 = LinearRegression().fit(x1, y1)
 for category, coef in zip(school_attributes, model3.coef_):
     print(category, ":", coef)
 print("unemp_rate_intercept:", model1.intercept_)
 
+# HS Enrollment Rate on School Attributes
 y4 = data['hs_enrol_rate']
 model4 = LinearRegression().fit(x1, y1)
 for category, coef in zip(school_attributes, model4.coef_):
