@@ -1,4 +1,4 @@
-from coded_school.data import get_median_income
+from coded_school.data import *
 from urllib.request import urlopen
 import pandas as pd
 import json
@@ -7,8 +7,7 @@ import plotly.express as px
 with urlopen("https://data.cityofchicago.org/api/geospatial/gdcf-axmw?method=export&format=GeoJSON") as response:
     zip_codes = json.load(response)
 
-income_dict = get_median_income()
-income_data = pd.DataFrame.from_dict(income_dict, orient='index', columns=['Median'])
+income_data = create_dataframe(urls)
 income_data = income_data.reset_index()
 income_data = income_data.rename(columns={'index': 'Zips'})
 
