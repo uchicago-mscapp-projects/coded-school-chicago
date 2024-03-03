@@ -1,7 +1,7 @@
 from dash import Dash, html, dcc, Input, Output
 from urllib.request import urlopen
-from coded_school.data.data import *
-from coded_school.data.api_school_data import cleaned_api
+from coded_school.Data.income_data import *
+from coded_school.Data.api_school_data import cleaned_api
 import statsmodels.api as sm
 import plotly.express as px
 import numpy as np
