@@ -68,40 +68,75 @@ app = Dash(__name__)
 app.layout = html.Div([
     html.H1("The impact of financial conditions of an area to school performance metrics", style={'textAlign': 'center'}),
 
+    html.P("Using data from City of Chicago and ZIP Atlas, we examined how the financial conditions \
+           of a given area impacts school performance metrics. The financial conditions of interest were: \
+           median household income, poverty rate, and unemployment rate. We defined an area by its zip code and, \
+           looking only at High Schools, we examined the data of seven performance areas: student attainment,\
+           culture/climate, Mobility rate, Chronic truancy, 11th grade SAT score, Drop out rate, and Suspension rate"),
+
+html.Div([
     html.Div([
-        html.H4("Summary of Multiple Regression Analysis"),
+        html.H2("Summary of Multiple Regression Analysis", style={'textAlign': 'center'}),
         html.Label("Select X Variable(s):"),
         dcc.Dropdown(
-                id='x-dropdown',
-                options=[
-                    {"label": "Student attainment rating", "value": "student_attainment_rating"},
-                    {"label": "Culture climate rating", "value": "culture_climate_rating"},
-                    {"label": "Mobility rate (%)", "value": "mobility_rate_pct"},
-                    {"label": "Chronic truancy (%)", "value": "chronic_truancy_pct"},
-                    {"label": "SAT grade 11 score", "value": "sat_grade_11_score_school"},
-                    {"label": "Drop out rate (%)", "value": "drop_out_rate"},
-                    {"label": "Suspensions rate (%)", "value": "suspensions_rate"}
-                ], multi=True, value=["sat_grade_11_score_school", "mobility_rate_pct"] 
-            ),
+            id='x-dropdown',
+            options=[
+                {"label": "Student attainment rating", "value": "student_attainment_rating"},
+                {"label": "Culture climate rating", "value": "culture_climate_rating"},
+                {"label": "Mobility rate (%)", "value": "mobility_rate_pct"},
+                {"label": "Chronic truancy (%)", "value": "chronic_truancy_pct"},
+                {"label": "SAT grade 11 score", "value": "sat_grade_11_score_school"},
+                {"label": "Drop out rate (%)", "value": "drop_out_rate"},
+                {"label": "Suspensions rate (%)", "value": "suspensions_rate"}
+            ], multi=True, value=["sat_grade_11_score_school", "mobility_rate_pct"] 
+        ),
 
         html.Br(),
         html.Label("Select Y Variable:"),
         dcc.Dropdown(
-                id='y-dropdown',
-                options=[
-                    {"label": "Poverty rate (%)", "value": "poverty_rate"},
-                    {"label": "Unemployment rate (%)", "value": "unemp_rate"},
-                    {"label": "High school enrollment rate (%)", "value": "hs_enrol_rate"},
-                    {"label": "Median income ($)", "value": "med_income"},
-                    {"label": "Log median income", "value": "log_med_income"}
-                ], value="med_income"
-            ),
-            html.Div(id='regression-table-container'),
-            html.Div(id='stats-test')
-    ]),
+            id='y-dropdown',
+            options=[
+                {"label": "Poverty rate (%)", "value": "poverty_rate"},
+                {"label": "Unemployment rate (%)", "value": "unemp_rate"},
+                {"label": "High school enrollment rate (%)", "value": "hs_enrol_rate"},
+                {"label": "Median income ($)", "value": "med_income"},
+                {"label": "Log median income", "value": "log_med_income"}
+            ], value="med_income"
+        ),
+        html.Div(id='regression-table-container'),
+        html.Div(id='stats-test')
+    ], style={'width': '49%', 'display': 'inline-block'}),
 
     html.Div([
-        html.H4("OLS Visualization"),
+        html.H2("Choropleth Map by Zip Code", style={'textAlign': 'center'}),
+        html.Label("Select Data"),
+        dcc.RadioItems(
+            id="data",
+            options=[
+                {"label": "Poverty rate (%)", "value": "poverty_rate"},
+                {"label": "Unemployment rate (%)", "value": "unemp_rate"},
+                {"label": "High school enrollment rate (%)", "value": "hs_enrol_rate"},
+                {"label": "Median income ($)", "value": "med_income"}
+            ], value="med_income", inline=True
+        ),
+        dcc.Graph(id="graph"), 
+    ], style={'width': '49%', 'float': 'right', 'display': 'inline-block'}),
+]),
+
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+
+    html.Div([
+        html.H2("OLS Visualization", style={'textAlign': 'center', 'marginBottom': '0px'}),
         html.Label("Select X Axis:"),
         dcc.Dropdown(
             id='x-axis',
@@ -124,22 +159,7 @@ app.layout = html.Div([
                 ], value="med_income"
             ),
             dcc.Graph(id='scatter-plot'),
-    ]),
-
-    html.Div([
-        html.H4("Choropleth Map by Zip Code"),
-        html.Label("Select Data"),
-        dcc.RadioItems(
-            id="data",
-            options=[
-                {"label": "Poverty rate (%)", "value": "poverty_rate"},
-                {"label": "Unemployment rate (%)", "value": "unemp_rate"},
-                {"label": "High school enrollment rate (%)", "value": "hs_enrol_rate"},
-                {"label": "Median income ($)", "value": "med_income"}
-            ], value="med_income", inline=True
-        ),
-        dcc.Graph(id="graph"), 
-    ]),
+    ], style={'margin': '0px', 'padding': '0px'}),
 ])
 
 @app.callback(
@@ -161,12 +181,19 @@ def update_regression_table(selected_x, selected_y):
     if selected_x and selected_y:
         coefficient, _, SE, P_value, R_squared, F_statistic = regression(selected_x, selected_y)
 
+      # Format numbers to have exactly 6 digits
+        coeff6 = [f"{c:.6f}" for c in coefficient[0]]
+        SE6 = [f"{s:.6f}" for s in SE]
+        P6 = [f"{p:.6f}" for p in P_value]
+        R6 = f"{R_squared:.6f}"
+        F6 = f"{F_statistic:.6f}"
+
         # Create DataFrame for regression results
         results_df = pd.DataFrame({
             'Variable': ['Intercept'] + selected_x,
-            'Coefficient': coefficient[0],
-            'Standard Error': SE,
-            'P-value': P_value
+            'Coefficient': coeff6,
+            'Standard Error': SE6,
+            'P-value': P6
         })
 
         # Convert DataFrame to DataTable
@@ -179,9 +206,9 @@ def update_regression_table(selected_x, selected_y):
 
         # Display R-squared and F-statistic
         stats = html.Div([
-            html.Label(f'R-squared: {R_squared}'),
+            html.Label(f'R-squared: {R6}'),
             html.Br(),
-            html.Label(f'F-statistic: {F_statistic}')
+            html.Label(f'F-statistic: {F6}')
         ])
 
         return table, stats
@@ -219,7 +246,7 @@ def display_choropleth(data):
     Inputs:
         data (str): The value in which the map will show.
 
-    Returns: A map seperated by zip code
+    Returns: A map separated by zip code
     """
     # Get the map boundary data
     with urlopen("https://data.cityofchicago.org/api/geospatial/gdcf-axmw?method=export&format=GeoJSON") as response:
@@ -231,7 +258,7 @@ def display_choropleth(data):
                             color=df_zip_map[data],
                             title='Economics Indicators by Zip Code',
                             mapbox_style="open-street-map",
-                            center={"lat": 41.881832, "lon": -87.623177},
+                            center={"lat": 41.85267, "lon": -87.66373},
                             color_continuous_scale="Viridis",
                             opacity=0.8,
                             zoom=9)
@@ -247,11 +274,12 @@ def display_choropleth(data):
     fig.add_trace(px.scatter_mapbox(df_full_school, 
                                     lat="school_latitude", 
                                     lon="school_longitude",
-                                    size='sat_grade_11_score_school',
                                     hover_name="long_name", 
                                     hover_data=['student_attainment_rating', 'culture_climate_rating', 
                                                 'mobility_rate_pct', 'chronic_truancy_pct', 
-                                                'sat_grade_11_score_school']).data[0])
+                                                'sat_grade_11_score_school'],
+                                    color_discrete_sequence=['red'],
+                                    ).update_traces(marker=dict(size=10, opacity=0.5)).data[0])
     
     return fig
 
