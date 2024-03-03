@@ -2,56 +2,62 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 import pandas as pd
+import plotly.express as px
+import statsmodels.formula.api as smf
 
 data = pd.read_csv('merged_data.csv')
 data = data.dropna()
 
 # Linear Regression: Median Income on Avg SAT score
-x = data['sat_grade_11_score_school'].values.reshape(-1, 1)
-y = data['med_income'].values
-model = LinearRegression().fit(x, y)
-print("med_income_intercept:", model.intercept_)
-print("sat_coef:", model.coef_)
-prediction = model.predict(x)
+model = smf.ols(formula='med_income ~  sat_grade_11_score_school', data = data).fit()
+print(model.summary())
 
-# Scatter plot of Avg SAT Score and Median Income 
-plt.scatter(data['sat_grade_11_score_school'], y, c = "green")
-plt.plot(data['sat_grade_11_score_school'], prediction, color = "red")
-plt.xlabel("Average 11th Grade SAT Score of Schools in Zip Code")
-plt.ylabel("Median Househould Income in this Zip Code")
-plt.show()
-
-#Median Income on School Attributes
-x1 = data[['student_attainment_rating', 'culture_climate_rating', 
-          'mobility_rate_pct', 'chronic_truancy_pct', 'sat_grade_11_score_school',
-          'drop_out_rate', 'suspensions_rate']].values
-y1 = data['med_income'].values
-model1 = LinearRegression().fit(x1, y1)
-school_attributes = ['student_attainment_rating', 'culture_climate_rating', 
-          'mobility_rate_pct', 'chronic_truancy_pct', 'sat_grade_11_score_school',
-          'drop_out_rate', 'suspensions_rate']
-
-for category, coef in zip(school_attributes, model1.coef_):
-    print(category, ":", coef)
-print("med_income_intercept:", model1.intercept_)
+# Median Income on School Attributes
+model2 = smf.ols(formula = 'med_income ~ student_attainment_rating + culture_climate_rating + mobility_rate_pct + chronic_truancy_pct + sat_grade_11_score_school + drop_out_rate + suspensions_rate', data = data).fit()
+print(model2.summary())
 
 # Poverty Rate on School Attributes
-y2 = data['poverty_rate']
-model2 = LinearRegression().fit(x1, y1)
-for category, coef in zip(school_attributes, model2.coef_):
-    print(category, ":", coef)
-print("poverty_rate_intercept:", model1.intercept_)
+model3 = smf.ols(formula = 'poverty_rate ~ student_attainment_rating + culture_climate_rating + mobility_rate_pct + chronic_truancy_pct + sat_grade_11_score_school + drop_out_rate + suspensions_rate', data = data).fit()
+print(model3.summary())
 
 # Unemployment Rate on School Attributes
-y3 = data['unemp_rate']
-model3 = LinearRegression().fit(x1, y1)
-for category, coef in zip(school_attributes, model3.coef_):
-    print(category, ":", coef)
-print("unemp_rate_intercept:", model1.intercept_)
+model4 = smf.ols(formula = 'unemp_rate ~ student_attainment_rating + culture_climate_rating + mobility_rate_pct + chronic_truancy_pct + sat_grade_11_score_school + drop_out_rate + suspensions_rate', data = data).fit()
+print(model4.summary())
 
-# HS Enrollment Rate on School Attributes
-y4 = data['hs_enrol_rate']
-model4 = LinearRegression().fit(x1, y1)
-for category, coef in zip(school_attributes, model4.coef_):
-    print(category, ":", coef)
-print("med_income_intercept:", model1.intercept_)
+# Med Income vs SAT 
+fig = px.scatter(data, x = 'sat_grade_11_score_school', 
+                 y = 'med_income', 
+                 hover_data = ['zip'],  color = 'med_income')
+fig.show()
+
+# Med Income vs SAT w/ trendline
+fig2 = px.scatter(data, x = 'sat_grade_11_score_school', 
+                 y = 'med_income', 
+                 hover_data = ['zip'], color = 'med_income',
+                 trendline = 'ols',)
+fig2.show()
+
+# poverty rate vs SAT 
+fig3 = px.scatter(data, x = 'sat_grade_11_score_school', 
+                 y = 'poverty_rate', 
+                 hover_data = ['zip'], color = 'poverty_rate',
+                 trendline = 'ols')
+fig3.show()
+
+# poverty rate vs suspensions
+fig4 = px.scatter(data, x = 'suspensions_rate', 
+                 y = 'poverty_rate', 
+                 hover_data = ['zip'], color = 'poverty_rate')
+fig4.show()
+
+# unemp rate vs chronic truancy
+fig4 = px.scatter(data, x = 'chronic_truancy_pct', 
+                 y = 'unemp_rate', 
+                 hover_data = ['zip'], color = 'unemp_rate',)
+fig4.show()
+
+# unemp rate vs suspensions
+fig5 = px.scatter(data, x = 'suspensions_rate', 
+                 y = 'unemp_rate', 
+                 hover_data = ['zip'], color = 'unemp_rate',)
+fig5.show()
