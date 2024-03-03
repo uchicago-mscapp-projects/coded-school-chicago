@@ -68,7 +68,7 @@ def merged_data():
     Returns:
         Merged DataFrame, combining educational and income information.
     """
-    data = average_by_zip(clean_columns())
+    data = average_by_zip(cleaned_api())
     income = create_dataframe()
     income["log_med_income"] = np.log(income["med_income"])
 
@@ -80,4 +80,4 @@ def merged_data():
     return merged_data 
     
 if __name__ == '__main__':
-    cleaned_data()
+    merged_data()
