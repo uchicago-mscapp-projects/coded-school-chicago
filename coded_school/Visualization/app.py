@@ -1,7 +1,7 @@
 from dash import Dash, html, dcc, Input, Output
 from urllib.request import urlopen
 from coded_school.data import *
-from coded_school.api_school_data import clean_columns
+from coded_school.api_school_data import cleaned_api
 import statsmodels.api as sm
 import plotly.express as px
 import numpy as np
@@ -13,7 +13,7 @@ import json
 df_zip_map = create_dataframe()
 df_zip_school = pd.read_csv("coded_school/merged_data.csv")
 df_zip_school = df_zip_school.fillna(df_zip_school.mean())
-df_full_school = clean_columns()
+df_full_school = cleaned_api()
 
 
 def regression(X, y):
