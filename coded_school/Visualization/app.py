@@ -1,7 +1,7 @@
 from dash import Dash, html, dcc, Input, Output
 from urllib.request import urlopen
 from coded_school.data.data import *
-from coded_school.data.api_school_data import clean_api
+from coded_school.data.api_school_data import cleaned_api
 import statsmodels.api as sm
 import plotly.express as px
 import numpy as np
@@ -16,7 +16,7 @@ df_zip_school = df_zip_school.fillna(df_zip_school.mean())
 <<<<<<< HEAD
 df_full_school = cleaned_api()
 =======
-df_full_school = clean_api()
+df_full_school = cleaned_api()
 >>>>>>> 113caf562e3f467327de1da4b18007731caaa7a6
 
 
