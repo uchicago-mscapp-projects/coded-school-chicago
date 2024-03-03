@@ -1,27 +1,7 @@
-import json
-import lxml.html
 import pandas as pd
 import requests
-from data import get_geo_data, combine_dicts, create_dataframe
-
-# API Chicago Public School
-url_chicago_portal = "https://data.cityofchicago.org/resource/2dn2-x66j.json"
-
-# Fetch data from API
-response_API = requests.get(url_chicago_portal)
-
-#Chicago Public Schools - School Progress Reports SY2324
-df = pd.read_json(response_API.text)
-#Filtered high school
-hs_df = df[df['primary_category'] == 'HS']
-
-filtered_df = hs_df[['long_name', 'zip', 'school_type', 'primary_category', 
-                    'student_growth_rating', 'student_attainment_rating', 
-                    'culture_climate_rating', 
-                    'mobility_rate_pct', 'chronic_truancy_pct', 'sat_grade_11_score_school',
-                    'one_year_dropout_rate_year','one_year_dropout_rate_year_1', 
-                    'suspensions_per_100_students_1','suspensions_per_100_students_2']]
-    #could not find 'school _survery_parent_response_rate_pct'
+from coded_school.data import create_dataframe
+import numpy as np
 
 #Cleaned Data
 def keep():
@@ -42,7 +22,7 @@ def keep():
     attainment_mapping = {'Far Below Expectations': 1, 'Below Average': 2, 'Average': 3, 'Above Average': 4, 'Met Expectations': 5, 'Far Above Expectations': 6}
     climate_mapping = {'Not Enough Data': pd.NA, 'Well Organized': 5, 'Organized': 4, 'Moderately Organized': 3, 'Partially Organized': 2, 'Not Yet Organized': 1}
 
-    filtered_df['student_growth_rating'] = filtered_df.replace(filter_df['student_growth_rating'], growth_mapping)
+    filtered_df['student_growth_rating'] = filtered_df.replace(filtered_df['student_growth_rating'], growth_mapping)
     filtered_df['student_attainment_rating'] = filtered_df['student_attainment_rating'].replace(attainment_mapping)
     filtered_df['culture_climate_rating'] = filtered_df['culture_climate_rating'].replace(climate_mapping)
 
@@ -63,7 +43,7 @@ def clean_columns():
     filtered_df = filtered_df[['zip', 'student_attainment_rating', 
                     'culture_climate_rating', 'mobility_rate_pct', 'chronic_truancy_pct', 
                     'sat_grade_11_score_school','one_year_dropout_rate_year','one_year_dropout_rate_year_1', 
-                    'suspensions_per_100_students_1','suspensions_per_100_students_2']]
+                    'suspensions_per_100_students_1','suspensions_per_100_students_2', 'school_latitude', 'school_longitude', 'long_name']]
 
     attainment_mapping = {'FAR BELOW EXPECTATIONS': 1, 'BELOW AVERAGE': 2, 'AVERAGE': 3, 'ABOVE AVERAGE': 4, 'MET EXPECTATIONS': 5, 'FAR ABOVE EXPECTATIONS': 6}
     climate_mapping = {'NOT ENOUGH DATA': None, 'WELL ORGANIZED': 5, 'ORGANIZED': 4, 'MODERATELY ORGANIZED': 3, 'PARTIALLY ORGANIZED': 2, 'NOT YET ORGANIZED': 1}
@@ -85,15 +65,11 @@ def average_by_zip(df):
 
     return avg_df
 
-    
-#Get url to CPS school page --- do we need this? had it there before and i didnt take it out 
-for index, row in hs_df.iterrows():
-    hs_df.at[index, "cps_school_profile"] = row["cps_school_profile"]["url"]
-
 
 def cleaned_data():
         data = average_by_zip(clean_columns())
         income = create_dataframe()
+        income["log_med_income"] = np.log(income["med_income"])
 
         data['zip'] = data['zip'].astype(str)
 
