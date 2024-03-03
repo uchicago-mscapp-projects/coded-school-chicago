@@ -2,7 +2,9 @@ import requests
 import lxml.html
 import pandas as pd
 
-url_poverty_rate = "https://zipatlas.com/us/il/chicago/zip-code-comparison/highest-family-poverty.htm"
+url_poverty_rate = (
+    "https://zipatlas.com/us/il/chicago/zip-code-comparison/highest-family-poverty.htm"
+)
 url_unemp_rate = "https://zipatlas.com/us/il/chicago/zip-code-comparison/highest-unemployment-rate.htm"
 url_hs_enroll_rate = "https://zipatlas.com/us/il/chicago/zip-code-comparison/percentage-enrolled-in-high-school.htm"
 url_med_income = "https://zipatlas.com/us/il/chicago/zip-code-comparison/highest-median-household-income.htm"
@@ -13,7 +15,7 @@ col_name = ["poverty_rate", "unemp_rate", "hs_enrol_rate", "med_income"]
 
 def get_geo_data(url):
     """
-    This function retrieves the zip code data its associate the values 
+    This function retrieves the zip code data its associate the values
     and returns it as a dictionary.
 
     Inputs:
@@ -47,21 +49,21 @@ def get_geo_data(url):
 def combine_dicts(dicts_list):
     """
     Combines a list of dictionaries into a single dictionary where each key maps to a list of cleaned and transformed values.
-    
+
     Parameters:
         dicts_list (list): A list of dictionaries.
-    
+
     Returns:
         A dictionary where each key maps to a list of cleaned and transformed values from the input dictionaries.
     """
     all_keys = set()
     # Collect all unique keys
     for d in dicts_list:
-        all_keys.update(d.keys())  
+        all_keys.update(d.keys())
     combined_dict = {}
     for key in all_keys:
         # Initialize empty list for each key
-        combined_dict[key] = []  
+        combined_dict[key] = []
         for d in dicts_list:
             value = d.get(key)
             # Clean and transform value to float
@@ -87,9 +89,9 @@ def create_dataframe():
         dict_zip = get_geo_data(web)
         dicts_list.append(dict_zip)
     combine = combine_dicts(dicts_list)
-    df = pd.DataFrame.from_dict(combine, orient='index', columns=col_name)
+    df = pd.DataFrame.from_dict(combine, orient="index", columns=col_name)
     # Convert median income to integer
     df["med_income"] = df["med_income"].astype("int")
     df = df.reset_index()
-    df = df.rename(columns={'index': 'zip'})
+    df = df.rename(columns={"index": "zip"})
     return df
