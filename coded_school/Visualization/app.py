@@ -9,15 +9,32 @@ import pandas as pd
 import dash_table
 import json
 
-#zip_codes["features"][0]["properties"]
+# Set up all the data
 df_zip_map = create_dataframe()
 df_zip_school = pd.read_csv('coded_school/merged_data.csv')
 df_zip_school = df_zip_school.fillna(df_zip_school.mean())
 df_full_school = clean_columns()
 
+
 def regression(X, y):
     """
+    This function calculate the multiple linear regression 
+    and return coefficients, predicted value, and othet test statistics.
+
+    Inputs:
+        X (list): A list strings of attributes or dependent variables
+        y (str): dependent variable
+
+    Returns:
+        coefficients: array of coefficient of the dependent variables.
+        predicted_value: predicted result of using the coefficient 
+                        to estimate data using the training data set.
+        SE: Standard error of coefficients.
+        P_value: P-value for hypothesis testing.
+        R_squared: The R square value of the model.
+        F_statistic: The F-statistic of the model.
     """
+    # Prepare the data
     df_x = df_zip_school[X]
     df_x.insert(0, 'Intercept', 1)
     df_x = df_x.to_numpy()
@@ -49,76 +66,80 @@ def regression(X, y):
 app = Dash(__name__)
 
 app.layout = html.Div([
-    html.H4("Economic indicators for the city of Chicago by zip code"),
+    html.H1("The impact of financial conditions of an area to school performance metrics", style={'textAlign': 'center'}),
 
     html.Div([
-    html.Label("Select X Variable(s):"),
-    dcc.Dropdown(
-            id='x-dropdown',
-            options=[
-                {"label": "Student attainment rating", "value": "student_attainment_rating"},
-                {"label": "Culture climate rating", "value": "culture_climate_rating"},
-                {"label": "Mobility rate (%)", "value": "mobility_rate_pct"},
-                {"label": "Chronic truancy (%)", "value": "chronic_truancy_pct"},
-                {"label": "SAT grade 11 score", "value": "sat_grade_11_score_school"},
-                {"label": "Drop out rate (%)", "value": "drop_out_rate"},
-                {"label": "Suspensions rate (%)", "value": "suspensions_rate"}
-            ], multi=True, value=["sat_grade_11_score_school", "mobility_rate_pct"] 
-        ),
+        html.H4("Summary of Multiple Regression Analysis"),
+        html.Label("Select X Variable(s):"),
+        dcc.Dropdown(
+                id='x-dropdown',
+                options=[
+                    {"label": "Student attainment rating", "value": "student_attainment_rating"},
+                    {"label": "Culture climate rating", "value": "culture_climate_rating"},
+                    {"label": "Mobility rate (%)", "value": "mobility_rate_pct"},
+                    {"label": "Chronic truancy (%)", "value": "chronic_truancy_pct"},
+                    {"label": "SAT grade 11 score", "value": "sat_grade_11_score_school"},
+                    {"label": "Drop out rate (%)", "value": "drop_out_rate"},
+                    {"label": "Suspensions rate (%)", "value": "suspensions_rate"}
+                ], multi=True, value=["sat_grade_11_score_school", "mobility_rate_pct"] 
+            ),
 
-    html.Br(),
-    html.Label("Select Y Variable:"),
-    dcc.Dropdown(
-            id='y-dropdown',
+        html.Br(),
+        html.Label("Select Y Variable:"),
+        dcc.Dropdown(
+                id='y-dropdown',
+                options=[
+                    {"label": "Poverty rate (%)", "value": "poverty_rate"},
+                    {"label": "Unemployment rate (%)", "value": "unemp_rate"},
+                    {"label": "High school enrollment rate (%)", "value": "hs_enrol_rate"},
+                    {"label": "Median income ($)", "value": "med_income"},
+                    {"label": "Log median income", "value": "log_med_income"}
+                ], value="med_income"
+            ),
+            html.Div(id='regression-table-container'),
+            html.Div(id='stats-test')
+    ]),
+
+    html.Div([
+        html.H4("OLS Visualization"),
+        html.Label("Select X Axis:"),
+        dcc.Dropdown(
+            id='x-axis',
+            options=[
+                    {"label": "Mobility rate (%)", "value": "mobility_rate_pct"},
+                    {"label": "Chronic truancy (%)", "value": "chronic_truancy_pct"},
+                    {"label": "SAT grade 11 score", "value": "sat_grade_11_score_school"},
+                    {"label": "Suspensions rate (%)", "value": "suspensions_rate"}
+            ], value="sat_grade_11_score_school"
+    ),
+
+        html.Br(),
+        html.Label("Select Y Axis:"),
+        dcc.Dropdown(
+                id='y-axis',
+                options=[
+                    {"label": "Poverty rate (%)", "value": "poverty_rate"},
+                    {"label": "Unemployment rate (%)", "value": "unemp_rate"},
+                    {"label": "Median income ($)", "value": "med_income"},
+                ], value="med_income"
+            ),
+            dcc.Graph(id='scatter-plot'),
+    ]),
+
+    html.Div([
+        html.H4("Choropleth Map by Zip Code"),
+        html.Label("Select Data"),
+        dcc.RadioItems(
+            id="data",
             options=[
                 {"label": "Poverty rate (%)", "value": "poverty_rate"},
                 {"label": "Unemployment rate (%)", "value": "unemp_rate"},
                 {"label": "High school enrollment rate (%)", "value": "hs_enrol_rate"},
-                {"label": "Median income ($)", "value": "med_income"},
-                {"label": "Log median income", "value": "log_med_income"}
-            ], value="med_income"
+                {"label": "Median income ($)", "value": "med_income"}
+            ], value="med_income", inline=True
         ),
-        html.Div(id='regression-table-container'),
-        html.Div(id='stats-test')
+        dcc.Graph(id="graph"), 
     ]),
-
-    html.Div([
-    html.Label("Select X Axis:"),
-    dcc.Dropdown(
-        id='x-axis',
-        options=[
-                {"label": "Mobility rate (%)", "value": "mobility_rate_pct"},
-                {"label": "Chronic truancy (%)", "value": "chronic_truancy_pct"},
-                {"label": "SAT grade 11 score", "value": "sat_grade_11_score_school"},
-                {"label": "Suspensions rate (%)", "value": "suspensions_rate"}
-        ], value="sat_grade_11_score_school"
-    ),
-
-    html.Br(),
-    html.Label("Select Y Axis:"),
-    dcc.Dropdown(
-            id='y-axis',
-            options=[
-                {"label": "Poverty rate (%)", "value": "poverty_rate"},
-                {"label": "Unemployment rate (%)", "value": "unemp_rate"},
-                {"label": "Median income ($)", "value": "med_income"},
-            ], value="med_income"
-        ),
-        dcc.Graph(id='scatter-plot'),
-
-    html.Br(),
-    html.Label("Select data"),
-    dcc.RadioItems(
-        id="data",
-        options=[
-            {"label": "Poverty rate (%)", "value": "poverty_rate"},
-            {"label": "Unemployment rate (%)", "value": "unemp_rate"},
-            {"label": "High school enrollment rate (%)", "value": "hs_enrol_rate"},
-            {"label": "Median income ($)", "value": "med_income"}
-        ], value="med_income", inline=True
-    ),
-    dcc.Graph(id="graph"), 
-    ])
 ])
 
 @app.callback(
@@ -127,6 +148,16 @@ app.layout = html.Div([
      Input('y-dropdown', 'value')]
 )
 def update_regression_table(selected_x, selected_y):
+    """
+    This function will update the table according to the input data.
+
+    Inputs:
+        selected_x: a list of dependent variables.
+        selected_y: a dependent variable
+
+    Returns:
+        The update table and the R square and F test statistics.
+    """
     if selected_x and selected_y:
         coefficient, _, SE, P_value, R_squared, F_statistic = regression(selected_x, selected_y)
 
@@ -161,10 +192,19 @@ def update_regression_table(selected_x, selected_y):
 @app.callback(
     Output("scatter-plot", "figure"),
     [Input("x-axis", "value"),
-     Input("y-axis", "value")]
-)
+     Input("y-axis", "value")])
 def display_scatterplot(x_axis, y_axis):
-    fig = px.scatter(df_zip_school, x=x_axis, y=y_axis, trendline="ols")
+    """
+    This function creates a scatter plot and shows the regression line between two variables.
+
+    Inputs:
+        x_axis: independent variable
+        y_value: dependent variable
+
+    Returns: a Scatter plot
+    """
+    fig = px.scatter(df_zip_school, x=x_axis, y=y_axis, 
+                     color=x_axis, size=y_axis, trendline="ols")
     return fig
 
 
@@ -172,6 +212,16 @@ def display_scatterplot(x_axis, y_axis):
     Output("graph", "figure"),
     Input("data", "value"))
 def display_choropleth(data):
+    """
+    This function will return the choropleth map of various economic indicators 
+    of the city of Chicago divided by zip code.
+
+    Inputs:
+        data (str): The value in which the map will show.
+
+    Returns: A map seperated by zip code
+    """
+    # Get the map boundary data
     with urlopen("https://data.cityofchicago.org/api/geospatial/gdcf-axmw?method=export&format=GeoJSON") as response:
         zip_codes = json.load(response)
 
@@ -189,8 +239,10 @@ def display_choropleth(data):
     fig.update_geos(fitbounds="locations", visible=False)
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 
+    # Prepare the individual high school information
     sat_score_mean = df_full_school['sat_grade_11_score_school'].mean()
     df_full_school['sat_grade_11_score_school'] = df_full_school['sat_grade_11_score_school'].fillna(sat_score_mean)
+
     # Create the scatter mapbox plot
     fig.add_trace(px.scatter_mapbox(df_full_school, 
                                     lat="school_latitude", 
