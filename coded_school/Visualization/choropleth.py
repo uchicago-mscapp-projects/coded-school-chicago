@@ -1,4 +1,4 @@
-from coded_school.data import *
+from coded_school.data.data import *
 from urllib.request import urlopen
 import pandas as pd
 import json
