@@ -1,6 +1,6 @@
 from dash import Dash, html, dcc, Input, Output
 from urllib.request import urlopen
-from coded_school.Data.income_data import *
+from coded_school.Data.income_data import create_dataframe
 from coded_school.Data.api_school_data import cleaned_api
 import statsmodels.api as sm
 import plotly.express as px
