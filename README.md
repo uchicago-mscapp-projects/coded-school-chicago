@@ -17,7 +17,7 @@ In order to view our project:
 
 * Clone this repository
 * Set up your local environment by running poetry install, then poetry shell 
-* From the command line, run vsapp='PYTHONPATH=$(pwd) python3 coded_school/Visualization/app.py, then vsapp.
+* From the command line, run alias vsapp='PYTHONPATH=$(pwd) python3 coded_school/Visualization/app.py', then vsapp.
 * This will open a webpage in your default browser.
 
 
