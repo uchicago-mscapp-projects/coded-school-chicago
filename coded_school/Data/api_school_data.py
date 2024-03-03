@@ -1,8 +1,8 @@
 import pandas as pd
 import requests
 import numpy as np
-from coded_school.data import create_dataframe
-from data import create_dataframe
+from coded_school.Data.data.data import create_dataframe
+from coded_school.Data.datad_school.Data.data import create_dataframe
 
 def cleaned_api():
     """
