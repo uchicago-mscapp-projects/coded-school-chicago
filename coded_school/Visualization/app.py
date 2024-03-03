@@ -252,11 +252,11 @@ def update_regression_table(selected_x, selected_y):
         )
 
         # Format numbers to have exactly 6 digits
-        coeff6 = [f"{c:.6f}" for c in coefficient[0]]
-        SE6 = [f"{s:.6f}" for s in SE]
-        P6 = [f"{p:.6f}" for p in P_value]
-        R6 = f"{R_squared:.6f}"
-        F6 = f"{F_statistic:.6f}"
+        coeff6 = [np.round(c, 6) for c in coefficient[0]]
+        SE6 = [np.round(s, 6) for s in SE]
+        P6 = [np.round(p, 6) for p in P_value]
+        R6 = np.round(R_squared, 6)
+        F6 = np.round(F_statistic, 6)
 
         # Create DataFrame for regression results
         results_df = pd.DataFrame(
