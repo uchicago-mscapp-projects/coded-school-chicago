@@ -11,13 +11,9 @@ import json
 
 # Set up all the data
 df_zip_map = create_dataframe()
-df_zip_school = pd.read_csv("coded_school/merged_data.csv")
+df_zip_school = pd.read_csv("coded_school/Data/merged_data.csv")
 df_zip_school = df_zip_school.fillna(df_zip_school.mean())
-<<<<<<< HEAD
 df_full_school = cleaned_api()
-=======
-df_full_school = cleaned_api()
->>>>>>> 113caf562e3f467327de1da4b18007731caaa7a6
 
 
 def regression(X, y):
