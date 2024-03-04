@@ -68,12 +68,12 @@ app = Dash(__name__)
 app.layout = html.Div(
     [
         html.H1(
-            "The impact of financial conditions of an area to school performance metrics",
+            "The impact of socioeconomic indicators of an area to school performance metrics",
             style={"textAlign": "center"},
         ),
         html.P(
-            "Using data from City of Chicago and ZIP Atlas, we examined how the financial conditions \
-           of a given area impacts school performance metrics. The financial conditions of interest were: \
+            "Using data from City of Chicago and ZIP Atlas, we examined how the socioeconomic indicators \
+           of a given area impacts school performance metrics. The socioeconomic indicators of interest were: \
            median household income, poverty rate, and unemployment rate. We defined an area by its zip code and, \
            looking only at High Schools, we examined the data of seven performance areas: student attainment,\
            culture/climate, Mobility rate, Chronic truancy, 11th grade SAT score, Drop out rate, and Suspension rate"
