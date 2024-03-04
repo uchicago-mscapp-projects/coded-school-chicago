@@ -1,6 +1,6 @@
 # Do the school performance metrics correlate to the financial conditions of an area?
 
-Using data from City of Chicago and ZIP Atlas, we examined how the financial conditions of a given area impacts school performance metrics. The financial conditions of interest were: ***median household income***, ***poverty rate***, and ***unemployment rate***. We defined an area by its zip code and, looking only at High Schools, we examined the data of seven performance areas: 
+Using data from City of Chicago and ZIP Atlas, we examined how school performance metrics correlate to the financial conditions of a given area. The financial conditions of interest were: ***median household income***, ***poverty rate***, and ***unemployment rate***. We defined an area by its zip code and, looking only at High Schools, we examined the data of seven performance areas: 
 
 * **Student Attainment**
 * **Culture/Climate**
