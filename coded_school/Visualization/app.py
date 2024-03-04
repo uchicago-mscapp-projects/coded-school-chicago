@@ -305,7 +305,7 @@ def display_scatterplot(x_axis, y_axis):
     Returns: a Scatter plot
     """
     fig = px.scatter(
-        df_zip_school, x=x_axis, y=y_axis, color=x_axis, size=y_axis, trendline="ols"
+        df_zip_school, x=x_axis, y=y_axis, color=x_axis, trendline="ols"
     )
     return fig
 
